@@ -45,24 +45,6 @@ public class CozinhaController {
 	 Cozinha cozinha = cozinhaRepository.porId(cozinhaId);
 	 return ResponseEntity.status(HttpStatus.OK).body(cozinha);
 	}
-//		HttpHeaders headers = new HttpHeaders();
-//		headers.add(HttpHeaders.LOCATION, "localhost:8080/cozinhas");
-
-//		return ResponseEntity
-	// .status(HttpStatus.FOUND)
-	// .headers(headers)
-	// .build();
-	// }
-
-//	@GetMapping("/{cozinhaId}")
-//	public ResponseEntity<Cozinha> buscar(@PathVariable Long cozinhaId) {
-//		Cozinha cozinha = cozinhaRepository.porId(cozinhaId);
-//		if (cozinha != null) {
-//			return ResponseEntity.ok(cozinha);
-//		} else {
-//			return ResponseEntity.notFound().build();
-//		}
-//	}
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
@@ -83,7 +65,7 @@ public class CozinhaController {
 		
 		return ResponseEntity.notFound().build();
 	}
-	
+
 
 	@DeleteMapping("/{cozinhaId}")
 	public ResponseEntity<Cozinha> remover(@PathVariable Long cozinhaId) throws Exception {
