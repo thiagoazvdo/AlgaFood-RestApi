@@ -3,6 +3,7 @@ package com.algaworks.algafood.api.controller;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class RestauranteController {
 	
 	@GetMapping
 	public List<Restaurante> listar(){
-		return restauranteRepository.todos();
+		return restauranteRepository.findAll();
 	}
 	
 	
@@ -47,10 +48,11 @@ public class RestauranteController {
 	//PathVariable pega a variavel passada pelo usuario e utiliza como referencia na busca do objeto 
 	@GetMapping("/{restauranteId}")
 	public ResponseEntity<Restaurante> buscar(@PathVariable Long restauranteId) {
-	 Restaurante restaurante = restauranteRepository.porId(restauranteId);
+	 Optional<Restaurante> restaurante = restauranteRepository.findById(restauranteId);
+			 
 	 //validando se o id do objeto passado nao eh null, se nao for, retorna, se for, o retorno sera not found  
-	 if(restaurante != null) {
-		 return ResponseEntity.ok(restaurante);
+	 if(restaurante.isPresent()) {
+		 return ResponseEntity.ok(restaurante.get());
 	 }
 	 return ResponseEntity.notFound().build();
 	}
@@ -73,16 +75,16 @@ public class RestauranteController {
 	
 	
 	@PutMapping("/{restauranteId}")
-	public ResponseEntity<?> atualizar(@PathVariable Long restauranteId, @RequestBody Restaurante restaurante) throws EntidadeNaoEncontradaException{
-		//Inserindo o restaurante do id passado pelo parametro nessa variavel de classe restauranteAtual
-		Restaurante restauranteAtual = restauranteRepository.porId(restauranteId);
+	public ResponseEntity<?> atualizar(@PathVariable Long restauranteId, @RequestBody Optional<Restaurante> restauranteAtual2) throws EntidadeNaoEncontradaException{
+		//Inserindo um optional <restaurante> do id passado pelo parametro nessa variavel de classe restauranteAtual
+		Optional<Restaurante> restauranteAtual = restauranteRepository.findById(restauranteId);
 		try {
 			//Validando se o restaurante passado por parametro existe
-			if (restauranteAtual != null) {
-				BeanUtils.copyProperties(restaurante, restauranteAtual, "id");
+			if (restauranteAtual.isPresent()) {
+				BeanUtils.copyProperties(restauranteAtual2, restauranteAtual.get(), "id");
 				//Usando a copyProperties para pegar as propriedades do body do restaurante passado na requisicao para atualizar o restaurante
-				restauranteAtual = cadastroRestaurante.salvar(restauranteAtual);
-				return ResponseEntity.ok(restauranteAtual);
+				Restaurante restauranteSalvo = cadastroRestaurante.salvar(restauranteAtual.get());
+				return ResponseEntity.ok(restauranteSalvo);
 				//Retornando o corpo da alteracao 
 			} 
 			return ResponseEntity.notFound().build();
@@ -94,9 +96,9 @@ public class RestauranteController {
 	
 	@PatchMapping("/{restauranteId}") //usado para modificar apenas alguns dos campos dentro de um objeto
 	public ResponseEntity<?> atualizarParcial(@PathVariable Long restauranteId, @RequestBody Map<String, Object> campos) throws Exception{
-		Restaurante restauranteAtual = restauranteRepository.porId(restauranteId);
+		Optional<Restaurante> restauranteAtual = restauranteRepository.findById(restauranteId);
 		//verificando se o id do restaurante passado eh null 
-		if (restauranteAtual == null) {
+		if (restauranteAtual.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
 		//for each com lambda onde para cada campo do Map possui um valor correspondente e imprimindo 
@@ -109,7 +111,7 @@ public class RestauranteController {
 	
 	//o metodo merge vai ser responsavel por fazer as alteracoes parciais
 	//recebe um hashmap (chave e valor) dos campos de origem e uma entidade que vai conter os valores destino
-	private void merge(Map<String, Object> camposOrigem, Restaurante restauranteDestino) {
+	private void merge(Map<String, Object> camposOrigem, Optional<Restaurante> restauranteAtual) {
 		//object mapper eh o responsavel por converter objetos java -> json e visse versa
 		ObjectMapper objectMapper = new ObjectMapper();
 		//o que está sendo feito aqui eh a criacao e mapeamento de uma instancia com base nos camposOrigem seguindo uma equivalencia evitando exceptions 
@@ -125,7 +127,7 @@ public class RestauranteController {
 				Object novoValor = FieldUtils.readField(restauranteOrigem, field.getName(), true);
 //				System.out.println(nomePropriedade + " = " + valorPropriedade);
 				//propriedade que atribui o campo field no objeto de destino o valor da propriedade	
-				ReflectionUtils.setField(field, restauranteDestino, novoValor);
+				ReflectionUtils.setField(field, restauranteAtual, novoValor);
 			} catch (IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

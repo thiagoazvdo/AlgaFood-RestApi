@@ -1,6 +1,7 @@
 package com.algaworks.algafood.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,15 +36,22 @@ public class CozinhaController {
 
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<Cozinha> listar() {
-		return cozinhaRepository.todas();
+		return cozinhaRepository.findAll();
 	}
 
 
 	@GetMapping("/{cozinhaId}")
 	public ResponseEntity<Cozinha> buscar(@PathVariable Long cozinhaId) {
-
-	 Cozinha cozinha = cozinhaRepository.porId(cozinhaId);
-	 return ResponseEntity.status(HttpStatus.OK).body(cozinha);
+	//O metodo findBy da classe JpaRepository requer um Optional para que evite ser lancado um NullPointerException 
+		//no caso de a entidade Cozinha nao existir
+	 Optional<Cozinha> cozinha = cozinhaRepository.findById(cozinhaId);
+	 
+	 //Verificamos se cozinha esta presente, similar ao que foi feito antes cozinha != null e entao retornamos a cozinha.get() visando pegar o valor dessa cozinha
+	 if (cozinha.isPresent()) {
+		 return ResponseEntity.ok(cozinha.get());
+	 }
+	 
+	 return ResponseEntity.notFound().build();
 	}
 
 	@PostMapping
@@ -54,13 +62,13 @@ public class CozinhaController {
 	
 	@PutMapping("/{cozinhaId}")
 	public ResponseEntity<Cozinha> atualizar(@PathVariable Long cozinhaId, @RequestBody Cozinha cozinha){
-		Cozinha cozinhaAtual = cozinhaRepository.porId(cozinhaId);
+		Optional<Cozinha> cozinhaAtual = cozinhaRepository.findById(cozinhaId);
 		
-		if (cozinhaAtual != null) {
-			BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
+		if (cozinhaAtual.isPresent()) {
+			BeanUtils.copyProperties(cozinha, cozinhaAtual.get(), "id");
 	
-			cozinhaAtual = cozinhaRepository.adicionar(cozinhaAtual);
-			return ResponseEntity.ok(cozinhaAtual);
+			Cozinha cozinhaSalva = cadastroCozinha.salvar(cozinhaAtual.get());
+			return ResponseEntity.ok(cozinhaSalva);
 		}
 		
 		return ResponseEntity.notFound().build();

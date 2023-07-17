@@ -1,6 +1,7 @@
 package com.algaworks.algafood.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,17 +36,17 @@ public class EstadoController {
 	
 	@GetMapping
 	public List<Estado> listar(){
-		return estadoRepository.listar();
+		return estadoRepository.findAll();
 	}
 	
 	//ResponseEntity eh utilizado para retornar o corpo do objeto desejado
 	//PathVariable pega a variavel passada pelo usuario e utiliza como referencia na busca do objeto 
 	@GetMapping("/{estadoId}")
 	public ResponseEntity<Estado> buscar(@PathVariable Long estadoId) {
-	 Estado estado = estadoRepository.buscar(estadoId);
+	 Optional<Estado> estado = estadoRepository.findById(estadoId);
 	 //validando se o id do objeto passado nao eh null, se nao for, retorna, se for, o retorno sera not found  
 	 if(estado != null) {
-		 return ResponseEntity.ok(estado);
+		 return ResponseEntity.ok(estado.get());
 	 }
 	 return ResponseEntity.notFound().build();
 	}
@@ -61,14 +62,14 @@ public class EstadoController {
 	@PutMapping("/{estadoId}")
 	public ResponseEntity<?> atualizar(@PathVariable Long estadoId, @RequestBody Estado estado) {
 		//Inserindo o estado do id passado pelo parametro nessa variavel de classe estadoAtual
-		Estado estadoAtual = estadoRepository.buscar(estadoId);
+		Optional<Estado> estadoAtual = estadoRepository.findById(estadoId);
 		
 		//Validando se o estado passado por parametro existe
-		if (estadoAtual != null) {
-			BeanUtils.copyProperties(estado, estadoAtual, "id");
+		if (estadoAtual.isPresent()) {
+			BeanUtils.copyProperties(estado, estadoAtual.get(), "id");
 			//Usando a copyProperties para pegar as propriedades do body do estado passado na requisicao para atualizar o estado do id passado
-			estadoAtual = cadastroEstado.salvar(estadoAtual);
-			return ResponseEntity.ok(estadoAtual);
+			Estado estadoSalvo = cadastroEstado.salvar(estadoAtual.get());
+			return ResponseEntity.ok(estadoSalvo);
 			//Retornando o corpo da alteracao 
 		} 
 		return ResponseEntity.notFound().build();
