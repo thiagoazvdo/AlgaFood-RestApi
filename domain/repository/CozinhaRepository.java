@@ -16,5 +16,8 @@ public interface CozinhaRepository extends JpaRepository<Cozinha, Long>{
 
 	//poderiamos usar tambem o findBy+atributo no nome do metodo springdatajpa exemplo:
 	Optional<Cozinha> findByNome(String nome);
-
+	
+	//usando o containing no springdatajpa para filtrar similar ao like em query JPQL:
+	List<Cozinha> findTodasByNomeContaining(String nome);
+	
 }

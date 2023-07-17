@@ -1,5 +1,6 @@
 package com.algaworks.algafood.api.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.algaworks.algafood.domain.model.Cozinha;
+import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repository.CozinhaRepository;
+import com.algaworks.algafood.domain.repository.RestauranteRepository;
 
 @RestController
 @RequestMapping("/teste")
@@ -21,9 +24,13 @@ public class TesteController {
 	@Autowired
 	private CozinhaRepository cozinhaRepository;
 	
+	@Autowired
+	private RestauranteRepository restauranteRepository;
+	
 	@GetMapping("/cozinhas/buscar-por-nome")
 	public List<Cozinha> buscarPorNome(@RequestHeader("nome") String nome){
-		return cozinhaRepository.nome(nome);
+//		return cozinhaRepository.nome(nome);
+		return cozinhaRepository.findTodasByNomeContaining(nome);
 	}
 	
 	@GetMapping("/cozinhas/unica/buscar-por-nome")
@@ -31,5 +38,16 @@ public class TesteController {
 		return cozinhaRepository.findByNome(nome);
 	}
 	
+	@GetMapping("/restaurante/por-taxa-frete")
+	public List<Restaurante> buscarPorTaxaFrete(
+			@RequestHeader("taxaInicial") BigDecimal taxaInicial, 
+			@RequestHeader BigDecimal taxaFinal){
+		return restauranteRepository.findByTaxaFreteBetween(taxaInicial, taxaFinal);
+	}
+	
+	@GetMapping("/restaurante/por-nome-e-id")
+	public List<Restaurante> buscarPorNomeEId(@RequestHeader("nome") String nome, @RequestHeader("Id") Long id){
+		return restauranteRepository.findByNomeContainingAndCozinhaId(nome, id);
+	}
 	
 }
