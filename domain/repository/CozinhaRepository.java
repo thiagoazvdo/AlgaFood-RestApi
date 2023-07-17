@@ -11,6 +11,8 @@ import com.algaworks.algafood.domain.model.Cozinha;
 @Repository
 public interface CozinhaRepository extends JpaRepository<Cozinha, Long>{
 	
+	//OBS: o prefixo find pode ser substituido por read, query, get, stream etc. todos tem a mesma funcionalidade
+	
 	//podemos passar como nome do metodo springdatajpa apenas a propriedade que desejamos consultar, como o nome nesse exemplo 
 	List<Cozinha> nome(String nome);
 
@@ -20,4 +22,7 @@ public interface CozinhaRepository extends JpaRepository<Cozinha, Long>{
 	//usando o containing no springdatajpa para filtrar similar ao like em query JPQL:
 	List<Cozinha> findTodasByNomeContaining(String nome);
 	
+	//usando a propriedade boolean que retorna se o atributo passado por parametro existe. muito util para regra de negocio
+	boolean existsByNome(String nome);
+		
 }

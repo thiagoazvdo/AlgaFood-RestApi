@@ -50,4 +50,22 @@ public class TesteController {
 		return restauranteRepository.findByNomeContainingAndCozinhaId(nome, id);
 	}
 	
+	//buscando os 2 primeiros pelo nome (contendo a letra, sigla ou palavra passada no header)
+	@GetMapping("/restaurante/2primeiros-por-nome")
+	public List<Restaurante> primeirosPorNome(@RequestHeader("nome") String nome){
+		return restauranteRepository.findTop2ByNomeContaining(nome);
+	}
+	
+	//retorna se existe a cozinha com o nome passado por parametro
+	@GetMapping("/cozinha/exists")
+	public boolean cozinhaExists(@RequestHeader("nome") String nome){
+		return cozinhaRepository.existsByNome(nome);
+	}
+	
+	//contando quantos restaurantes temos com o id da cozinha passada por parametro
+	@GetMapping("/restaurante/count-por-cozinha")
+	public int restauranteCountPorCozinha(@RequestHeader("id") Long id){
+		return restauranteRepository.countByCozinhaId(id);
+	}
+	
 }
