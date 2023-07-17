@@ -41,13 +41,14 @@ public class TesteController {
 	@GetMapping("/restaurante/por-taxa-frete")
 	public List<Restaurante> buscarPorTaxaFrete(
 			@RequestHeader("taxaInicial") BigDecimal taxaInicial, 
-			@RequestHeader BigDecimal taxaFinal){
-		return restauranteRepository.findByTaxaFreteBetween(taxaInicial, taxaFinal);
+			@RequestHeader BigDecimal taxaFinal, @RequestHeader String nome){
+		return restauranteRepository.find(nome, taxaInicial, taxaFinal);
 	}
 	
 	@GetMapping("/restaurante/por-nome-e-id")
 	public List<Restaurante> buscarPorNomeEId(@RequestHeader("nome") String nome, @RequestHeader("Id") Long id){
-		return restauranteRepository.findByNomeContainingAndCozinhaId(nome, id);
+	//		return restauranteRepository.findByNomeContainingAndCozinhaId(nome, id);
+		return restauranteRepository.consultarPorNome(nome, id);
 	}
 	
 	//buscando os 2 primeiros pelo nome (contendo a letra, sigla ou palavra passada no header)
