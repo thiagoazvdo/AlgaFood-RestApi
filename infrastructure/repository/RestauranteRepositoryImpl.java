@@ -64,5 +64,32 @@ public class RestauranteRepositoryImpl implements RestauranteRepositoryQueries {
 		
 		return query.getResultList();
 		}
+	
+//	@Override
+//	public List<Restaurante> find(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal) {
+//		CriteriaBuilder builder = manager.getCriteriaBuilder();
+//		
+//		CriteriaQuery<Restaurante> criteria = builder.createQuery(Restaurante.class);
+//		Root<Restaurante> root = criteria.from(Restaurante.class);
+//		
+//		ArrayList predicates = new ArrayList<Predicate>();
+//		
+//		if(StringUtils.hasText(nome)) {
+//			predicates.add(builder.like(root.get("nome"), "%" + nome + "%"));
+//		}
+//		
+//		if(taxaFreteInicial!= null) { 
+//			predicates.add(builder.greaterThanOrEqualTo(root.get("taxaFrete"), taxaFreteInicial));
+//		}
+//		
+//		if(taxaFreteFinal != null) {
+//			predicates.add((Predicate) builder.lessThanOrEqualTo(root.get("taxaFrete"), taxaFreteFinal));
+//		}
+//		
+//		criteria.where((javax.persistence.criteria.Predicate[]) predicates.toArray(new Predicate[0]));
+//		
+//		TypedQuery<Restaurante> query = manager.createQuery(criteria);
+//		return query.getResultList();
+//	}
 
 }
