@@ -1,12 +1,15 @@
 package com.algaworks.algafood.infrastructure.repository;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repository.RestauranteRepositoryQueries;
@@ -29,12 +32,37 @@ public class RestauranteRepositoryImpl implements RestauranteRepositoryQueries {
 
 	@Override
 	public List<Restaurante> find(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal) {
+		
+		//usando o stringbuilder para concatenacao de strings
+		var jpql = new StringBuilder();
+		//where 0 = 0 para que seja sempre verdade e caso o usuario nao passe algum dos parametros a consulta ainda funcione
+		jpql.append("from Restaurante where 0 = 0 ");
 
-		var jpql = "from Restaurante where nome like :nome " + "and taxaFrete between :taxaInicial and :taxaFinal";
-
-		return manager.createQuery(jpql, Restaurante.class).setParameter("nome", "%" + nome + "%")
-				.setParameter("taxaInicial", taxaFreteInicial).setParameter("taxaFinal", taxaFreteFinal)
-				.getResultList();
-	}
+		//criando um HashMap para que dentro de cada if adicionar o parametro e o valor (caso exista) para no final usar no forEach
+		var parametros = new HashMap<String, Object>();
+		
+		if (StringUtils.hasLength(nome)) {
+			jpql.append("and nome like :nome ");
+			parametros.put("nome", "%" + nome + "%");
+		}
+		
+		if (taxaFreteInicial != null) {
+			jpql.append("and taxaFrete >= :taxaInicial ");
+			parametros.put("taxaInicial", taxaFreteInicial);
+		}
+		
+		if (taxaFreteFinal != null) {
+			jpql.append("and taxaFrete <= :taxaFinal ");
+			parametros.put("taxaFinal", taxaFreteFinal);
+		}
+		
+		//query do tipo typedquery - consulta tipada que retorna um restaurante
+		TypedQuery<Restaurante> query = manager.createQuery(jpql.toString(), Restaurante.class);
+		
+		//atribuindo um a um do mapa
+		parametros.forEach((chave, valor) -> query.setParameter(chave, valor));
+		
+		return query.getResultList();
+		}
 
 }
