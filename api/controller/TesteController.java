@@ -14,6 +14,8 @@ import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repository.CozinhaRepository;
 import com.algaworks.algafood.domain.repository.RestauranteRepository;
+import com.algaworks.algafood.infrastructure.repository.spec.RestauranteComFreteGratisSpec;
+import com.algaworks.algafood.infrastructure.repository.spec.RestauranteComNomeSemelhanteSpec;
 
 @RestController
 @RequestMapping("/teste")
@@ -66,6 +68,14 @@ public class TesteController {
 	@GetMapping("/restaurante/count-por-cozinha")
 	public int restauranteCountPorCozinha(@RequestHeader("id") Long id){
 		return restauranteRepository.countByCozinhaId(id);
+	}
+	
+	@GetMapping("/restaurante/com-frete-gratis")
+	public List<Restaurante> restauranteComFreteGratis(@RequestHeader String nome){
+		var comFreteGratis = new RestauranteComFreteGratisSpec();
+		var comNomeSemelhante = new RestauranteComNomeSemelhanteSpec(nome);
+		//para o metodo findAll() suportar as classes JpaSpecifications precisamos precisamos que o RestauranteRepository tambem herde a classe JpaSpecificationExecutor
+		return restauranteRepository.findAll(comFreteGratis.and(comNomeSemelhante));
 	}
 	
 }
