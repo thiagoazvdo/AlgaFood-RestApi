@@ -24,5 +24,9 @@ public class Cozinha {
 	@Column(name = "nom_cozinha")
 	private String nome;
 	
+	//caso queira que a cozinha tenha acesso a muitos restaurantes devemos fazer da seguinte forma
+//	@JsonIgnore // -> evita que um get de cozinhas fique em loop infinito carregando restaurante e cozinhas inumeras vezes
+//	@OneToMany(mappedBy= "cozinha") //mappedBy -> propriedade que foi usada para o mapeamento na entidade Restaurante
+//	private List<Restaurante> restaurantes = new ArrayList<>();
 	
 }

@@ -75,13 +75,13 @@ public class RestauranteController {
 	
 	
 	@PutMapping("/{restauranteId}")
-	public ResponseEntity<?> atualizar(@PathVariable Long restauranteId, @RequestBody Optional<Restaurante> restauranteAtual2) throws EntidadeNaoEncontradaException{
-		//Inserindo um optional <restaurante> do id passado pelo parametro nessa variavel de classe restauranteAtual
+	public ResponseEntity<?> atualizar(@PathVariable Long restauranteId, @RequestBody Restaurante restaurante) {
+		//Inserindo um optional <restaurante> do id passado pelo parametro nessa variavel de classe restaurante
 		Optional<Restaurante> restauranteAtual = restauranteRepository.findById(restauranteId);
 		try {
 			//Validando se o restaurante passado por parametro existe
 			if (restauranteAtual.isPresent()) {
-				BeanUtils.copyProperties(restauranteAtual2, restauranteAtual.get(), "id");
+				BeanUtils.copyProperties(restaurante, restauranteAtual.get(), "id", "formasPagamento");
 				//Usando a copyProperties para pegar as propriedades do body do restaurante passado na requisicao para atualizar o restaurante
 				Restaurante restauranteSalvo = cadastroRestaurante.salvar(restauranteAtual.get());
 				return ResponseEntity.ok(restauranteSalvo);
@@ -94,18 +94,18 @@ public class RestauranteController {
 		}
 	}
 	
-	@PatchMapping("/{restauranteId}") //usado para modificar apenas alguns dos campos dentro de um objeto
-	public ResponseEntity<?> atualizarParcial(@PathVariable Long restauranteId, @RequestBody Map<String, Object> campos) throws Exception{
-		Optional<Restaurante> restauranteAtual = restauranteRepository.findById(restauranteId);
-		//verificando se o id do restaurante passado eh null 
-		if (restauranteAtual.isEmpty()) {
-			return ResponseEntity.notFound().build();
-		}
-		//for each com lambda onde para cada campo do Map possui um valor correspondente e imprimindo 
-		//metodo extraido para resumir o patchmapping
-		merge(campos, restauranteAtual);
-		return atualizar(restauranteId, restauranteAtual);
-	}
+//	@PatchMapping("/{restauranteId}") //usado para modificar apenas alguns dos campos dentro de um objeto
+//	public ResponseEntity<?> atualizarParcial(@PathVariable Long restauranteId, @RequestBody Map<String, Object> campos) throws Exception{
+//		Optional<Restaurante> restauranteAtual = restauranteRepository.findById(restauranteId);
+//		//verificando se o id do restaurante passado eh null 
+//		if (restauranteAtual.isEmpty()) {
+//			return ResponseEntity.notFound().build();
+//		}
+//		//for each com lambda onde para cada campo do Map possui um valor correspondente e imprimindo 
+//		//metodo extraido para resumir o patchmapping
+//		merge(campos, restauranteAtual);
+//		return atualizar(restauranteId, restauranteAtual);
+//	}
 
 
 	

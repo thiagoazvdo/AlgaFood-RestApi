@@ -7,7 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import com.algaworks.algafood.domain.model.Restaurante;
 
 public class RestauranteSpecs {
-	
+
 	
 	public static Specification<Restaurante> comFreteGratis(){
 		//expressao lambda de um metodo simplificado que passa como parametro o root, criteria e builder
