@@ -39,6 +39,7 @@ public class Restaurante {
 	@Column(name = "taxa_frete")
 	private BigDecimal taxaFrete;
 	
+	@JsonIgnore
 	@Embedded //agregando a entidade endereco
 	private Endereco endereco;
 	

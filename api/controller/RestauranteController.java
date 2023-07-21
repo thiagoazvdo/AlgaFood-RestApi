@@ -80,7 +80,7 @@ public class RestauranteController {
 		try {
 			//Validando se o restaurante passado por parametro existe
 			if (restauranteAtual.isPresent()) {
-				BeanUtils.copyProperties(restaurante, restauranteAtual.get(), "id", "formasPagamento");
+				BeanUtils.copyProperties(restaurante, restauranteAtual.get(), "id", "formasPagamento", "endereco");
 				//Usando a copyProperties para pegar as propriedades do body do restaurante passado na requisicao para atualizar o restaurante
 				Restaurante restauranteSalvo = cadastroRestaurante.salvar(restauranteAtual.get());
 				return ResponseEntity.ok(restauranteSalvo);
