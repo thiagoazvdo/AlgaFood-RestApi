@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -37,6 +38,9 @@ public class Restaurante {
 	
 	@Column(name = "taxa_frete")
 	private BigDecimal taxaFrete;
+	
+	@Embedded //agregando a entidade endereco
+	private Endereco endereco;
 	
 	@ManyToOne
 //	@JoinColumn(name= "coinha_id", nullable=false)
