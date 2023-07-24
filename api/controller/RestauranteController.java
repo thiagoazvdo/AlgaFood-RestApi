@@ -1,14 +1,10 @@
 package com.algaworks.algafood.api.controller;
 
-import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.ReflectionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +19,6 @@ import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repository.RestauranteRepository;
 import com.algaworks.algafood.domain.service.CadastroRestauranteService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping("/restaurantes")
@@ -80,7 +75,7 @@ public class RestauranteController {
 		try {
 			//Validando se o restaurante passado por parametro existe
 			if (restauranteAtual.isPresent()) {
-				BeanUtils.copyProperties(restaurante, restauranteAtual.get(), "id", "formasPagamento", "endereco");
+				BeanUtils.copyProperties(restaurante, restauranteAtual.get(), "id", "formasPagamento", "endereco", "dataCadastro", "produtos"); // objeto modificado, objeto existente, propriedades a serem ignoradas na atualizacao
 				//Usando a copyProperties para pegar as propriedades do body do restaurante passado na requisicao para atualizar o restaurante
 				Restaurante restauranteSalvo = cadastroRestaurante.salvar(restauranteAtual.get());
 				return ResponseEntity.ok(restauranteSalvo);
@@ -110,29 +105,29 @@ public class RestauranteController {
 	
 	//o metodo merge vai ser responsavel por fazer as alteracoes parciais
 	//recebe um hashmap (chave e valor) dos campos de origem e uma entidade que vai conter os valores destino
-	private void merge(Map<String, Object> camposOrigem, Optional<Restaurante> restauranteAtual) {
-		//object mapper eh o responsavel por converter objetos java -> json e visse versa
-		ObjectMapper objectMapper = new ObjectMapper();
-		//o que está sendo feito aqui eh a criacao e mapeamento de uma instancia com base nos camposOrigem seguindo uma equivalencia evitando exceptions 
-		Restaurante restauranteOrigem = objectMapper.convertValue(camposOrigem, Restaurante.class);
-		camposOrigem.forEach((nomePropriedade, valorPropriedade) -> {
-			//classe utilitaria de reflections do spring
-			//para cada campo do map de camposOrigem o campo nomePropriedade via ReflectionUtils e atribui ao field
-			Field field = ReflectionUtils.findRequiredField(Restaurante.class, nomePropriedade);
-			//atributos private nao podem ser acessados em outras classes e a propriedade setAccessible libera o acesso do campo para consultar e realizar alteracoes 
-			field.setAccessible(true);
-			try {
-				//no meu curso de especialista spring rest foi utilizada uma propriedade diferente que esta deprecated entao dessa forma consegui atingir basicamente o mesmo resultado
-				Object novoValor = FieldUtils.readField(restauranteOrigem, field.getName(), true);
+//	private void merge(Map<String, Object> camposOrigem, Optional<Restaurante> restauranteAtual) {
+//		//object mapper eh o responsavel por converter objetos java -> json e visse versa
+//		ObjectMapper objectMapper = new ObjectMapper();
+//		//o que está sendo feito aqui eh a criacao e mapeamento de uma instancia com base nos camposOrigem seguindo uma equivalencia evitando exceptions 
+//		Restaurante restauranteOrigem = objectMapper.convertValue(camposOrigem, Restaurante.class);
+//		camposOrigem.forEach((nomePropriedade, valorPropriedade) -> {
+//			//classe utilitaria de reflections do spring
+//			//para cada campo do map de camposOrigem o campo nomePropriedade via ReflectionUtils e atribui ao field
+//			Field field = ReflectionUtils.findRequiredField(Restaurante.class, nomePropriedade);
+//			//atributos private nao podem ser acessados em outras classes e a propriedade setAccessible libera o acesso do campo para consultar e realizar alteracoes 
+//			field.setAccessible(true);
+//			try {
+//				//no meu curso de especialista spring rest foi utilizada uma propriedade diferente que esta deprecated entao dessa forma consegui atingir basicamente o mesmo resultado
+//				Object novoValor = FieldUtils.readField(restauranteOrigem, field.getName(), true);
 //				System.out.println(nomePropriedade + " = " + valorPropriedade);
-				//propriedade que atribui o campo field no objeto de destino o valor da propriedade	
-				ReflectionUtils.setField(field, restauranteAtual, novoValor);
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			});
-	}
+//				//propriedade que atribui o campo field no objeto de destino o valor da propriedade	
+//				ReflectionUtils.setField(field, restauranteAtual, novoValor);
+//			} catch (IllegalAccessException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			});
+//	}
 	
 	
 }

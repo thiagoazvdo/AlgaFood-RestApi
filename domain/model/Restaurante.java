@@ -1,6 +1,7 @@
 package com.algaworks.algafood.domain.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -43,9 +48,24 @@ public class Restaurante {
 	@Embedded //agregando a entidade endereco
 	private Endereco endereco;
 	
+	@JsonIgnore
+	@CreationTimestamp 	//anotacao da implementacao do hibernate que atribui a propriedade como uma data hora atual no momento do cadastro
+	@Column(nullable = false, columnDefinition = "datetime") // definindo a coluna com apenas yyyyMMdd hrmins
+	private LocalDateTime dataCadastro;
+	
+	@JsonIgnore
+	@UpdateTimestamp // anotacao da implementacao do hibernate que atribui a propriedade como uma data hora atual no momento da atualizacao
+	@Column(nullable = false, columnDefinition = "datetime") // definindo a coluna com apenas yyyyMMdd hrmins
+	private LocalDateTime dataAtualizacao;
+	
+	
 	@ManyToOne
 //	@JoinColumn(name= "coinha_id", nullable=false)
 	private Cozinha cozinha;
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "restaurante")
+	private List<Produto> produtos = new ArrayList<>();
 	
 	@JsonIgnore	// ignorando as formas de pagamento por restaurante no retorno da requisicao de restaurantes
 	@ManyToMany // muitos restaurantes com muitas formas de pagamento
