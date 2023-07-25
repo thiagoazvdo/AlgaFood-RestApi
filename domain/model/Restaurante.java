@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -22,6 +23,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -58,9 +60,10 @@ public class Restaurante {
 	@Column(nullable = false, columnDefinition = "datetime") // definindo a coluna com apenas yyyyMMdd hrmins
 	private LocalDateTime dataAtualizacao;
 	
-	
-	@ManyToOne
-//	@JoinColumn(name= "coinha_id", nullable=false)
+//	@JsonIgnore
+	@JsonIgnoreProperties("hibernateLazyInitializer") //ignora a serializacao e evita o erro de proxy
+	@ManyToOne(fetch = FetchType.LAZY)	//relacionamentos terminados em ToOne seguem o padrao eager loading (carregamento ansioso)e por padrao pode ser feito em 1 unico select ou e vario, como solucao podemos mudar o fetch padrao eager para lazy que nesse caso otimiza a consulta do jpa
+	@JoinColumn(name= "cozinha_id", nullable=false)
 	private Cozinha cozinha;
 
 	@JsonIgnore
