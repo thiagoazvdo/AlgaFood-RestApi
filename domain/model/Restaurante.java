@@ -61,7 +61,7 @@ public class Restaurante {
 	private LocalDateTime dataAtualizacao;
 	
 //	@JsonIgnore
-	@JsonIgnoreProperties("hibernateLazyInitializer") //ignora a serializacao e evita o erro de proxy
+	@JsonIgnoreProperties("hibernateLazyInitializer") //ignora a serializacao para evitar o erro de proxy ao realizar uma busca de restaurante retornando a cozinha associada ao mesmo
 	@ManyToOne(fetch = FetchType.LAZY)	//relacionamentos terminados em ToOne seguem o padrao eager loading (carregamento ansioso)e por padrao pode ser feito em 1 unico select ou e vario, como solucao podemos mudar o fetch padrao eager para lazy que nesse caso otimiza a consulta do jpa
 	@JoinColumn(name= "cozinha_id", nullable=false)
 	private Cozinha cozinha;
@@ -70,8 +70,9 @@ public class Restaurante {
 	@OneToMany(mappedBy = "restaurante")
 	private List<Produto> produtos = new ArrayList<>();
 	
+	
 	@JsonIgnore	// ignorando as formas de pagamento por restaurante no retorno da requisicao de restaurantes
-	@ManyToMany // muitos restaurantes com muitas formas de pagamento
+	@ManyToMany // muitos restaurantes com muitas formas de pagamento (o padrao para relacionamentos terminados em ToMany eh lazy loading dessa forma as consultas sao otimizadas e so serao realiza-las pelo hibernate quando for extremamente necessario)
 	@JoinTable(name = "restaurante_forma_pagamento", //customizando o nome da tabela intermediaria entre as entidades formapagamento e restaurante
 	joinColumns = @JoinColumn(name = "restaurante_id"), //fazendo referencia a chave primaria de restaurante
 	inverseJoinColumns = @JoinColumn (name = "forma_pagamento_id"))

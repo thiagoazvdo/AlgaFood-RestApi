@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
 @Data 	
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
-@Table(name = "tab_cozinha")
+@Table(name = "cozinha")
 public class Cozinha {
 	
 	@EqualsAndHashCode.Include
@@ -21,7 +21,7 @@ public class Cozinha {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(name = "nom_cozinha")
+	@Column(name = "nome")
 	private String nome;
 	
 	//caso queira que a cozinha tenha acesso a muitos restaurantes devemos fazer da seguinte forma

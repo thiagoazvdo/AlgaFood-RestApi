@@ -13,6 +13,9 @@ import com.algaworks.algafood.domain.model.Restaurante;
 
 public interface RestauranteRepository extends JpaRepository<Restaurante, Long>, RestauranteRepositoryQueries, JpaSpecificationExecutor<Restaurante> {
 	
+	//fazendo um join em cozinha para realizar apenas uma consulta no jpa ~ listar as cozinhas e observar no console da aplicacao
+	@Query("from Restaurante r join fetch r.cozinha")// join fetch para retornar restaurantes que possuam formas de pagamento
+	List<Restaurante> findAll();
 	
 	//usando JPQL customizadas com @Query ~ fazendo um bind do que receber como parametro passar na query
 	@Query("from Restaurante where nome like %:nome% and cozinha.id = :id")
