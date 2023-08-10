@@ -1,12 +1,10 @@
 package com.algaworks.algafood.api.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.algaworks.algafood.domain.exception.EntidadeEmUsoException;
-import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.model.Estado;
 import com.algaworks.algafood.domain.repository.EstadoRepository;
 import com.algaworks.algafood.domain.service.CadastroEstadoService;
@@ -42,13 +38,8 @@ public class EstadoController {
 	//ResponseEntity eh utilizado para retornar o corpo do objeto desejado
 	//PathVariable pega a variavel passada pelo usuario e utiliza como referencia na busca do objeto 
 	@GetMapping("/{estadoId}")
-	public ResponseEntity<Estado> buscar(@PathVariable Long estadoId) {
-	 Optional<Estado> estado = estadoRepository.findById(estadoId);
-	 //validando se o id do objeto passado nao eh null, se nao for, retorna, se for, o retorno sera not found  
-	 if(estado != null) {
-		 return ResponseEntity.ok(estado.get());
-	 }
-	 return ResponseEntity.notFound().build();
+	public Estado buscar(@PathVariable Long estadoId) {
+		return cadastroEstado.buscarOuFalhar(estadoId);	 
 	}
 	
 	
@@ -60,33 +51,29 @@ public class EstadoController {
 	
 	
 	@PutMapping("/{estadoId}")
-	public ResponseEntity<?> atualizar(@PathVariable Long estadoId, @RequestBody Estado estado) {
+	public Estado atualizar(@PathVariable Long estadoId, @RequestBody Estado estado) {
 		//Inserindo o estado do id passado pelo parametro nessa variavel de classe estadoAtual
-		Optional<Estado> estadoAtual = estadoRepository.findById(estadoId);
+		Estado estadoAtual = cadastroEstado.buscarOuFalhar(estadoId);
 		
-		//Validando se o estado passado por parametro existe
-		if (estadoAtual.isPresent()) {
-			BeanUtils.copyProperties(estado, estadoAtual.get(), "id");
-			//Usando a copyProperties para pegar as propriedades do body do estado passado na requisicao para atualizar o estado do id passado
-			Estado estadoSalvo = cadastroEstado.salvar(estadoAtual.get());
-			return ResponseEntity.ok(estadoSalvo);
-			//Retornando o corpo da alteracao 
-		} 
-		return ResponseEntity.notFound().build();
-		//Retornando 404 not found para o cenario de o id do recurso/objeto passado no endpoint nao ter sido encontrado no banco
-	}
-	
-	
-	@DeleteMapping("/{estadoId}")
-	public ResponseEntity<?> remover(@PathVariable Long estadoId) {
-		try {
-			cadastroEstado.excluir(estadoId);
-			return ResponseEntity.noContent().build();
-		} catch (EntidadeNaoEncontradaException e) {
-			return ResponseEntity.notFound().build();
-		} catch (EntidadeEmUsoException e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).build();
+		BeanUtils.copyProperties(estado, estadoAtual, "id");
+		return cadastroEstado.salvar(estadoAtual);
 		}
-	}
 	
+	
+//	@DeleteMapping("/{estadoId}")
+//	public ResponseEntity<?> remover(@PathVariable Long estadoId) {
+//		try {
+//			cadastroEstado.excluir(estadoId);
+//			return ResponseEntity.noContent().build();
+//		} catch (EntidadeNaoEncontradaException e) {
+//			return ResponseEntity.notFound().build();
+//		} catch (EntidadeEmUsoException e) {
+//			return ResponseEntity.status(HttpStatus.CONFLICT).build();
+//		}
+//	}
+	
+	@DeleteMapping
+	public void remover(@PathVariable Long estadoId) {
+		cadastroEstado.excluir(estadoId);
+	}
 }
