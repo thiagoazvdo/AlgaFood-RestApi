@@ -73,8 +73,8 @@ public class CozinhaController {
 //	}
 	
 	@DeleteMapping("/{cozinhaId}")
-	@ResponseStatus(HttpStatus.NO_CONTENT)	//retorno default para o caso de sucesso
-	public void remover(@PathVariable Long cozinhaId) throws Exception {
+//	@ResponseStatus(HttpStatus.NO_CONTENT)	//retorno default para o caso de sucesso
+	public void remover(@PathVariable Long cozinhaId) {
 		cadastroCozinha.excluir(cozinhaId);	//dentro de cada classe exception temos a annotation de status o que simplifica nosso metodo remover
 		//podemos ainda dentro do service no metodo excluir ao inves de criar classes de exception usar a exception direta, muito interessante pois reduz o codigo 
 	}

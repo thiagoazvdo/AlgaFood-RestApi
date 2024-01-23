@@ -72,7 +72,7 @@ public class EstadoController {
 //		}
 //	}
 	
-	@DeleteMapping
+	@DeleteMapping("/{estadoId}")
 	public void remover(@PathVariable Long estadoId) {
 		cadastroEstado.excluir(estadoId);
 	}
