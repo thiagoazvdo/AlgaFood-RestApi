@@ -1,5 +1,6 @@
 package com.algaworks.algafood.domain.service;
 
+import com.algaworks.algafood.domain.exception.CozinhaNaoEncontradaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -14,7 +15,6 @@ import com.algaworks.algafood.domain.repository.CozinhaRepository;
 public class CadastroCozinhaService {
 
 	private static final String MSG_COZINHA_EM_USO = "Cozinha de código %d não pode ser removida, " + "pois está em uso";
-	private static final String MSG_COZINHA_NAO_ENCONTRADA = "Não existe um cadastro de cozinha " + "com código %d";
 	@Autowired
 	private CozinhaRepository cozinhas;
 
@@ -22,7 +22,7 @@ public class CadastroCozinhaService {
 		return cozinhas.save(cozinha);
 	}
 
-	public void excluir(Long cozinhaId) throws Exception {
+	public void excluir(Long cozinhaId) throws EntidadeNaoEncontradaException {
 		try {
 			cozinhas.deleteById(cozinhaId);
 			
@@ -30,8 +30,7 @@ public class CadastroCozinhaService {
 //			throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Não existe um cadastro de cozinha " + "com código %d", cozinhaId)); // dessa forma nao precisamos das classes de excpetion 
 			// mas nao eh boa pratica pois temos status dentro da classe de servico que em teoria deve conter apenas regras de negocio 
 			
-			throw new EntidadeNaoEncontradaException(
-					String.format(MSG_COZINHA_NAO_ENCONTRADA, cozinhaId));
+			throw new CozinhaNaoEncontradaException(cozinhaId);
 		
 		} catch (DataIntegrityViolationException e) {
 //			throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Cozinha de código %d não pode ser removida, " + "pois está em uso", cozinhaId)); // dessa forma nao precisamos das classes de exception
@@ -43,8 +42,7 @@ public class CadastroCozinhaService {
 	
 	public Cozinha buscarOuFalhar(Long cozinhaId) throws EntidadeNaoEncontradaException {
 		return cozinhas.findById(cozinhaId)
-				.orElseThrow(() -> new EntidadeNaoEncontradaException(
-						String.format(MSG_COZINHA_NAO_ENCONTRADA, cozinhaId)));
+				.orElseThrow(() -> new CozinhaNaoEncontradaException(cozinhaId));
 	}
 	
 }
