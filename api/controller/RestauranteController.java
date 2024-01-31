@@ -8,6 +8,7 @@ import com.algaworks.algafood.domain.exception.NegocioException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,7 +51,7 @@ public class RestauranteController {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Restaurante adicionar(@RequestBody Restaurante restaurante){
+	public Restaurante adicionar(@RequestBody @Validated Restaurante restaurante){	//@Validated valida se o objeto passado está de acordo com o esperado
 		try {
 			return cadastroRestaurante.salvar(restaurante);
 		} catch (EntidadeNaoEncontradaException e) {

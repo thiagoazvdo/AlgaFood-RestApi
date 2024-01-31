@@ -18,7 +18,7 @@ import java.io.InvalidObjectException;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
-@ControllerAdvice   //anotação para tratar todos os métodos de @ExceptionHandler do projeto
+@ControllerAdvice   //anotação para centralizar o lançamento de erros nessa classe analisando o tratamento correto através das anotações @ExceptionHandler dos métodos contidos nessa classe
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     //erro simulado e não funcionando ~ posteriormente analisar com mais calma
