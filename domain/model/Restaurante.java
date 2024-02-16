@@ -38,7 +38,6 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "restaurante")
 public class Restaurante {
-	
 
 	@EqualsAndHashCode.Include
 	@Id
@@ -49,6 +48,7 @@ public class Restaurante {
 	@NotBlank
 	@Column(name = "nome")
 	private String nome;
+
 
 
 	@DecimalMin("0") //taxa de frete maior ou igual a zero
@@ -68,6 +68,7 @@ public class Restaurante {
 	@UpdateTimestamp
 	@Column(nullable = false, columnDefinition = "datetime")
 	private LocalDateTime dataAtualizacao;
+
 
 	@Valid //validação em cascata
 	@ConvertGroup(from = Default.class, to = Groups.CozinhaId.class)
