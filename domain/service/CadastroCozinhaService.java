@@ -25,16 +25,10 @@ public class CadastroCozinhaService {
 	public void excluir(Long cozinhaId) throws EntidadeNaoEncontradaException {
 		try {
 			cozinhas.deleteById(cozinhaId);
-			
 		} catch (EmptyResultDataAccessException e) {
-//			throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Não existe um cadastro de cozinha " + "com código %d", cozinhaId)); // dessa forma nao precisamos das classes de excpetion 
-			// mas nao eh boa pratica pois temos status dentro da classe de servico que em teoria deve conter apenas regras de negocio 
-			
 			throw new CozinhaNaoEncontradaException(cozinhaId);
 		
 		} catch (DataIntegrityViolationException e) {
-//			throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Cozinha de código %d não pode ser removida, " + "pois está em uso", cozinhaId)); // dessa forma nao precisamos das classes de exception
-			// mas nao eh boa pratica pois temos status dentro da classe de servico que em teoria deve conter apenas regras de negocio 
 			throw new EntidadeEmUsoException(
 					String.format(MSG_COZINHA_EM_USO, cozinhaId));
 		}

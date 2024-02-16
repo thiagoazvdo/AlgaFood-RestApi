@@ -35,8 +35,7 @@ public class EstadoController {
 		return estadoRepository.findAll();
 	}
 	
-	//ResponseEntity eh utilizado para retornar o corpo do objeto desejado
-	//PathVariable pega a variavel passada pelo usuario e utiliza como referencia na busca do objeto 
+
 	@GetMapping("/{estadoId}")
 	public Estado buscar(@PathVariable Long estadoId) {
 		return cadastroEstado.buscarOuFalhar(estadoId);	 
@@ -51,26 +50,14 @@ public class EstadoController {
 	
 	
 	@PutMapping("/{estadoId}")
-	public Estado atualizar(@PathVariable Long estadoId, @RequestBody Estado estado) {
+	public Estado atualizar(@PathVariable Long estadoId,
+							@RequestBody Estado estado) {
 		//Inserindo o estado do id passado pelo parametro nessa variavel de classe estadoAtual
 		Estado estadoAtual = cadastroEstado.buscarOuFalhar(estadoId);
 		
 		BeanUtils.copyProperties(estado, estadoAtual, "id");
 		return cadastroEstado.salvar(estadoAtual);
 		}
-	
-	
-//	@DeleteMapping("/{estadoId}")
-//	public ResponseEntity<?> remover(@PathVariable Long estadoId) {
-//		try {
-//			cadastroEstado.excluir(estadoId);
-//			return ResponseEntity.noContent().build();
-//		} catch (EntidadeNaoEncontradaException e) {
-//			return ResponseEntity.notFound().build();
-//		} catch (EntidadeEmUsoException e) {
-//			return ResponseEntity.status(HttpStatus.CONFLICT).build();
-//		}
-//	}
 	
 	@DeleteMapping("/{estadoId}")
 	public void remover(@PathVariable Long estadoId) {

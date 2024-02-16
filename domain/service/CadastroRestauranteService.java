@@ -14,6 +14,8 @@ import com.algaworks.algafood.domain.repository.RestauranteRepository;
 public class CadastroRestauranteService {
 
 	private static final String MSG_RESTAURANTE_EM_USO = "Restaurante de código %d não pode ser removido, pois está em uso";
+	private static final String MSG_RESTAURANTE_NAO_ENCONTRADO
+			= "Não existe um cadastro de restaurante com código %d";
 
 
 	@Autowired
