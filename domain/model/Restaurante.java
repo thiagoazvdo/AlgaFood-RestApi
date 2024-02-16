@@ -34,7 +34,9 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Table(name = "restaurante")
 public class Restaurante {
-	
+
+
+	@NotNull(groups= Groups.EstadoId.class)
 	@EqualsAndHashCode.Include
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,6 +46,7 @@ public class Restaurante {
 	@Column(name = "nome")
 	private String nome;
 	
+	@DecimalMin("1")
 	@Column(name = "taxa_frete")
 	private BigDecimal taxaFrete;
 	
@@ -62,6 +65,7 @@ public class Restaurante {
 	private LocalDateTime dataAtualizacao;
 	
 //	@JsonIgnore
+	@Valid //anotation usada para validar em cascata entrando na clase Cozinha e validando as anotações caso haja no objeto cozinha
 	@JsonIgnoreProperties("hibernateLazyInitializer") //ignora a serializacao para evitar o erro de proxy ao realizar uma busca de restaurante retornando a cozinha associada ao mesmo
 	@ManyToOne(fetch = FetchType.LAZY)	//relacionamentos terminados em ToOne seguem o padrao eager loading (carregamento ansioso)e por padrao pode ser feito em 1 unico select ou e vario, como solucao podemos mudar o fetch padrao eager para lazy que nesse caso otimiza a consulta do jpa
 	@JoinColumn(name= "cozinha_id", nullable=false)
